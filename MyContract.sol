@@ -11,16 +11,30 @@ contract Ownable{
     }
 }
 
+contract SecretVault{
+    string secret;
+    constructor(string memory _secret) public{
+        secret = _secret;
+    }
+
+    function getSecret() public view  returns (string memory){
+        return secret;
+    }
+}
+
 contract MyContract is Ownable{
+    address secretVault;
     string secret;
 
     constructor(string memory _secret) public{
-        secret = _secret;
+        SecretVault _secretVault = new SecretVault(_secret);
+        secret = address(_secretVault);
         super();
 
     }
     function getSecret() public view onlyOwner returns (string memory){
-        return secret;
+        SecretVault _secretVault = SecretVault(_secret);
+        return _secretVault.getSecret();
     }
 
 }
